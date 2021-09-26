@@ -1,3 +1,9 @@
+# SNA-ChangeOrg-AH
+Change.org Social Network Analysis on AH's Case Study Example
+ - Data Analysis of Petitions, Comments, Accounts, and Signatures with Timings and IDs
+
+## Reverse-engineering the API
+
 Obtain signatures for a petition on Change.org using reverse-engineered API
 
 I use Python 3, you will also need Pandas and Requests installed.
