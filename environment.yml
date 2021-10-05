@@ -11,3 +11,4 @@ dependencies:
     - requests==2.26.0
     - tqdm==4.62.3
     - widgetsnbextension==3.5.1
+    - ipywidgets==7.6.5
