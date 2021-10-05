@@ -12,3 +12,4 @@ dependencies:
     - tqdm==4.62.3
     - widgetsnbextension==3.5.1
     - ipywidgets==7.6.5
+    - matplotlib==3.4.3
