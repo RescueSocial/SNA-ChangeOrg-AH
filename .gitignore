@@ -1,3 +1,4 @@
+*.csv
 .ipynb_checkpoints
 
 # These are some examples of commonly ignored file patterns.
