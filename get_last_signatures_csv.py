@@ -1,9 +1,9 @@
 import pandas as pd
 import requests
-from collections.abc import MutableMapping
 import json
 import time
 import argparse
+from helpers import flatten_dict
 
 
 def petition_signatures_request(petitionSlug, maxSigners):
@@ -20,23 +20,6 @@ def petition_signatures_request(petitionSlug, maxSigners):
         replace('"maxSigners":20', '"maxSigners":%d')
     
     return petition_signatures_graphql_post_request_template % (petitionSlug, maxSigners)
-
-
-def flatten_dict(d: MutableMapping, parent_key: str = '', sep: str ='.') -> MutableMapping:
-    """Flatten a dictionary.
-    
-    
-    Taken from https://www.freecodecamp.org/news/how-to-flatten-a-dictionary-in-python-in-4-different-ways/
-    """
-    
-    items = []
-    for k, v in d.items():
-        new_key = parent_key + sep + k if parent_key else k
-        if isinstance(v, MutableMapping):
-            items.extend(flatten_dict(v, new_key, sep=sep).items())
-        else:
-            items.append((new_key, v))
-    return dict(items)
 
 
 def get_signatures_dataframe(petition_slug: str, number_signatures: int):

@@ -5,8 +5,11 @@ import re
 import time
 from tqdm.auto import tqdm
 import argparse
+from collections.abc import MutableMapping
+from filecache import filecache
 
 
+@filecache
 def petition_slug_to_id(slug):
     """Obtain a petition ID for a petition slug."""
     
@@ -62,3 +65,20 @@ def request_generator(f, f_delay=None, offset=0, batch_size=10, **kwargs):
         offset_current += len(data)
         if f_delay is not None:
             f_delay()
+
+
+def flatten_dict(d: MutableMapping, parent_key: str = '', sep: str ='.') -> MutableMapping:
+    """Flatten a dictionary.
+    
+    
+    Taken from https://www.freecodecamp.org/news/how-to-flatten-a-dictionary-in-python-in-4-different-ways/
+    """
+    
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, MutableMapping):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
