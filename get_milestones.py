@@ -2,10 +2,11 @@ import pandas as pd
 import requests
 import json
 import time
+from time import sleep
 import argparse
+import os
 from sys import exit
 from helpers import flatten_dict, petition_slug_to_id
-import 
 
 
 def petition_milestones_request(petition_id, cursor):
@@ -24,7 +25,7 @@ def petition_milestones_request(petition_id, cursor):
     return petition_signatures_graphql_post_request_template
 
 
-def get_milestones_dataframe(petition_id: str):
+def get_milestones_dataframe(petition_id: str, delay_ms: int):
     """Obtain a dataframe with the signatures."""
 
     # see above how we got it
@@ -68,6 +69,7 @@ def get_milestones_dataframe(petition_id: str):
         print(hasNextPage, endCursor)
         
         results.append(d)
+        sleep(delay_ms / 1000.)
         
     try:
         df = pd.concat([pd.DataFrame(z['data']['petition']['updatesConnection']['nodes']) for z in results])
@@ -86,6 +88,11 @@ parser = argparse.ArgumentParser(description="Obtain last signatures for a petit
 parser.add_argument('--petition_slug', type=str,
                     help="The last part of the URL in https://www.change.org/p/[petition_slug]",
                     required=True)
+parser.add_argument('--delay_ms', type=int,
+                    help="Number of milliseconds to wait between requests",
+                    default=500,
+                    required=False)
+
 
 if __name__ == "__main__":
     
@@ -104,7 +111,7 @@ if __name__ == "__main__":
         exit(0)
     
     # obtain the dataframe
-    data = get_milestones_dataframe(petition_id)
+    data = get_milestones_dataframe(petition_id, args.delay_ms)
     
     # saving data
     data['df'].to_csv(out_filename + '.csv', index=False)
