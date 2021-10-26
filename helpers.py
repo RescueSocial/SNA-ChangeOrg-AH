@@ -65,7 +65,7 @@ def request_generator(f, f_delay=None, offset=0, batch_size=10, **kwargs):
         except Exception as e:
             print(f'Download failed at offset {offset_current}')
             print(e)
-            break
+            raise e
 
         if not len(data):
             break
