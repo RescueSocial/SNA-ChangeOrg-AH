@@ -3,6 +3,7 @@
 *.json
 *.swp
 data
+*.tgz
 .ipynb_checkpoints
 
 # These are some examples of commonly ignored file patterns.
