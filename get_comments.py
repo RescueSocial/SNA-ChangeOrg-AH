@@ -5,6 +5,7 @@ import re
 import time
 from tqdm.auto import tqdm
 import argparse
+from sys import exit
 from helpers import petition_slug_to_id, flatten_dict, limit, request_generator
 
 
@@ -43,19 +44,23 @@ if __name__ == "__main__":
     id_ = petition_slug_to_id(args.petition_slug)
     print(f"Petition ID is {id_}")
     
-    # obtain the dataframe
-    data = list(limit(request_generator(f=request_comments,
-                                    f_delay=lambda: sleep(1. * args.delay_ms / 1000),
-                  offset=args.offset, petition_id=id_), nmax=args.limit))
-
-    df = pd.DataFrame(data)
-    
     # output filename for the csv file
     out_filename = f"change_org_comments_petition_slug_{args.petition_slug}" +\
                    f"_at_{time.strftime('%Y%m%d-%H%M%S')}"+\
                    f"_limit_{args.limit}" +\
                    f"_offset_{args.offset}" +\
                    f"_delay_ms_{args.delay_ms}.csv"
+    
+    if os.path.isfile(out_filename):
+        print("File already exists, doing nothing!")
+        exit(0)
+    
+    # obtain the dataframe
+    data = list(limit(request_generator(f=request_comments,
+                                    f_delay=lambda: sleep(1. * args.delay_ms / 1000),
+                  offset=args.offset, petition_id=id_), nmax=args.limit))
+
+    df = pd.DataFrame(data)
     
     # saving data
     df.to_csv(out_filename, index=False)
