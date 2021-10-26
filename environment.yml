@@ -13,3 +13,4 @@ dependencies:
     - widgetsnbextension==3.5.1
     - ipywidgets==7.6.5
     - matplotlib==3.4.3
+    - filecache==0.81
