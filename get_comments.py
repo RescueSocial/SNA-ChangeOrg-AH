@@ -7,7 +7,7 @@ import time
 from tqdm.auto import tqdm
 import argparse
 from sys import exit
-from helpers import petition_slug_to_id, flatten_dict, limit, request_generator
+from helpers import petition_slug_to_id, flatten_dict, limit, request_generator, file_exists
 
 
 def request_comments(petition_id=None, limit=10, offset=0):
@@ -36,25 +36,23 @@ parser.add_argument('--offset', type=int, default=0, help="From which comment to
 parser.add_argument('--delay_ms', type=int, default=500, help="How much to wait between requests?")
 
 
-if __name__ == "__main__":
-    
-    # obtaining arguments
-    args = parser.parse_args()
-
+def main(args):
     # obtaining petition ID
     id_ = petition_slug_to_id(args.petition_slug)
     print(f"Petition ID is {id_}")
     
     # output filename for the csv file
     out_filename = f"change_org_comments_petition_slug_{args.petition_slug}" +\
-                   f"_at_{time.strftime('%Y%m%d-%H%M%S')}"+\
                    f"_limit_{args.limit}" +\
                    f"_offset_{args.offset}" +\
+                   f"_at_{time.strftime('%Y%m%d-%H%M%S')}"+\
                    f"_delay_ms_{args.delay_ms}.csv"
     
-    if os.path.isfile(out_filename):
+    if file_exists(f"change_org_comments_petition_slug_{args.petition_slug}" +\
+                   f"_limit_{args.limit}" +\
+                   f"_offset_{args.offset}"):
         print("File already exists, doing nothing!")
-        exit(0)
+        return
     
     # obtain the dataframe
     data = list(limit(request_generator(f=request_comments,
@@ -66,3 +64,9 @@ if __name__ == "__main__":
     # saving data
     df.to_csv(out_filename, index=False)
     print(f"Data saved to {out_filename}")
+
+if __name__ == "__main__":
+    # obtaining arguments
+    args = parser.parse_args()
+    
+    main(args)

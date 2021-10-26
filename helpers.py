@@ -7,7 +7,14 @@ from tqdm.auto import tqdm
 import argparse
 from collections.abc import MutableMapping
 from filecache import filecache
+import os
 
+
+def file_exists(pattern):
+    """Check if a file already exists."""
+    files = os.listdir()
+    return any([pattern in fn for fn in files])
+    
 
 @filecache
 def petition_slug_to_id(slug):
@@ -19,7 +26,9 @@ def petition_slug_to_id(slug):
     assert data.ok, data.text
     
     regexp = 'data-petition_id="([0-9]+)"'
-    return int(re.search(regexp, html).groups()[0])
+    id_ = int(re.search(regexp, html).groups()[0])
+    print(f"Petition slug {slug} resolved to id {id_}")
+    return id_
 
 
 def flatten_dict(dct, delimeter="__"):

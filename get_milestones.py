@@ -6,7 +6,7 @@ from time import sleep
 import argparse
 import os
 from sys import exit
-from helpers import flatten_dict, petition_slug_to_id
+from helpers import flatten_dict, petition_slug_to_id, file_exists
 
 
 def petition_milestones_request(petition_id, cursor):
@@ -93,12 +93,7 @@ parser.add_argument('--delay_ms', type=int,
                     default=500,
                     required=False)
 
-
-if __name__ == "__main__":
-    
-    # obtaining arguments
-    args = parser.parse_args()
-
+def main(args):
     # obtaining petition id
     petition_id = petition_slug_to_id(args.petition_slug)
     
@@ -106,10 +101,10 @@ if __name__ == "__main__":
     out_filename = f"change_org_milestones_petition_slug_{args.petition_slug}" +\
                    f"_at_{time.strftime('%Y%m%d-%H%M%S')}"
     
-    if os.path.isfile(out_filename + '.json'):
+    if file_exists(f"change_org_milestones_petition_slug_{args.petition_slug}"):
         print("File already exists, doing nothing!")
-        exit(0)
-    
+        return
+        
     # obtain the dataframe
     data = get_milestones_dataframe(petition_id, args.delay_ms)
     
@@ -120,3 +115,9 @@ if __name__ == "__main__":
     with open(out_filename + '.json', 'w') as f:
         f.write(json.dumps(data['raw']))
     print(f"Data saved to {out_filename}.json")
+
+if __name__ == '__main__':
+    # obtaining arguments
+    args = parser.parse_args()
+    
+    main(args)
