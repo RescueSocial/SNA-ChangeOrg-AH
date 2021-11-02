@@ -24,9 +24,16 @@ def petition_slug_to_id(slug):
     html = data.text
     
     assert data.ok, data.text
-    
-    regexp = 'data-petition_id="([0-9]+)"'
-    id_ = int(re.search(regexp, html).groups()[0])
+
+    regexps = ['"petition":{"id":"([0-9]+)"', 'data-petition_id="([0-9]+)"']
+    id_ = None
+    for regexp in regexps:
+        try:
+            id_ = int(re.search(regexp, html).groups()[0])
+        except:
+            print(f"Regexp {regexp} failed")
+    if id_ is None:
+        raise ValueError(f"Can't obtain petition ID for slug {slug}")
     print(f"Petition slug {slug} resolved to id {id_}")
     return id_
 
