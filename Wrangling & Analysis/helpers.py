@@ -13,6 +13,13 @@ import seaborn as sb
 
 warnings.filterwarnings("ignore")
 
+def count_keywords(mylist, df, col):
+    my_dict = {}
+    for key in mylist:
+        my_dict[key] = df[df[col].str.contains(key)].shape[0]
+        
+    return my_dict
+
 def print_featureless(df):
     for col in df.columns:
         if len(df[col].unique()) == 1:
@@ -176,7 +183,7 @@ def contr_peaks(df, user, n=5, threshold=0):
         - user (str) --> the username to filter on.
     """
     df_user = df.query(" username == @user ")
-    df_user_daily = df_user.groupby('date')['text'].count().to_frame().reset_index().rename(columns={'text': 'ncomments'})
+    df_user_daily = df_user.groupby('date')['comment'].count().to_frame().reset_index().rename(columns={'comment': 'ncomments'})
     df_user_daily.sort_values(['ncomments', 'date'], ascending=[False, False], inplace=True)
     
     bar_peaks(df_user_daily.head(n), f'"{user}"' + ' Top Contributions', threshold=threshold)
@@ -206,29 +213,17 @@ def text_peaks(df, mytext, n=5, threshold=0, mode='equal'):
         
     """
     if mode == 'equal': 
-        df_text = df[df.text == mytext]
-    elif mode == 'contains'
-        df_text = df[df.text.str.contains(mytext)]
-    elif mode == 'list'
-        df_text = df[df.text.str.contains('|'.join(mytext))]
+        df_text = df[df.comment == mytext]
+    elif mode == 'contain':
+        df_text = df[df.comment.str.contains(mytext)]
+    elif mode == 'list':
+        df_text = df[df.comment.str.contains('|'.join(mytext))]
         
-    df_text_daily = df_text.groupby('date')['text'].count().to_frame().reset_index().rename(columns={'text': 'ncomments'})
+    df_text_daily = df_text.groupby('date')['comment'].count().to_frame().reset_index().rename(columns={'comment': 'ncomments'})
     df_text_daily.sort_values(['ncomments', 'date'], ascending=[False, False], inplace=True)
     
     bar_peaks(df_text_daily.head(n), f'"{mytext}"' + ' Peak Contributions', threshold=threshold)
     
-# def text_all_peaks(df, mytext, n=5, threshold=0):
-#     """
-#     A function to filter on specific text contributions and plot bar graph for peaks
-#     Args:
-#         - df --> the dataframe to be used.
-#         - mytext (str) --> the text to filter on.
-#     """
-#     df_text = df[df.text.str.contains(mytext)]
-#     df_text_daily = df_text.groupby('date')['text'].count().to_frame().reset_index().rename(columns={'text': 'ncomments'})
-#     df_text_daily.sort_values(['ncomments', 'date'], ascending=[False, False], inplace=True)
-    
-#     bar_peaks(df_text_daily.head(n), f'"{mytext}"' + ' Peak Contributions', threshold=threshold)
 
 def users_peaks(df, mytext, n=5, threshold=0, xlabel='UserName', mode='equal'):
     """
@@ -242,29 +237,17 @@ def users_peaks(df, mytext, n=5, threshold=0, xlabel='UserName', mode='equal'):
         
     """
     if mode == 'equal': 
-        df_text = df[df.text == mytext]
-    elif mode == 'contains'
-        df_text = df[df.text.str.contains(mytext)]
-    elif mode == 'list'
-        df_text = df[df.text.str.contains('|'.join(mytext))]
+        df_text = df[df.comment == mytext]
+    elif mode == 'contain':
+        df_text = df[df.comment.str.contains(mytext)]
+    elif mode == 'list':
+        df_text = df[df.comment.str.contains('|'.join(mytext))]
  
     df_text_users = df_text.username.value_counts().to_frame().reset_index().rename(columns={'index': 'username',
                                                                                              'username': 'ncomments'})
     
     bar_peaks(df_text_users.head(n), f'"{mytext}"' + ' Top Commented Users', threshold=threshold, xlabel=xlabel)
 
-# def users_all_peaks(df, mytext, n=5, threshold=0, xlabel='UserName'):
-#     """
-#     A function to filter on specific text contributions and plot bar graph for peaks
-#     Args:
-#         - df --> the dataframe to be used.
-#         - mytext (str) --> the text to filter on.
-#     """
-#     df_text = df[df.text.str.contains(mytext)]
-#     df_text_users = df_text.username.value_counts().to_frame().reset_index().rename(columns={'index': 'username',
-#                                                                                              'username': 'ncomments'})
-    
-#     bar_peaks(df_text_users.head(n), f'"{mytext}"' + ' Top Commented Users', threshold=threshold, xlabel=xlabel)
     
 # # Same as bar_peaks     
 # def bar_dates(df, title, threshold=float("inf")):
