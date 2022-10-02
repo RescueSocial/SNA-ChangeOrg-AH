@@ -2,7 +2,6 @@
 *.csv
 *.json
 *.swp
-data
 *.tgz
 .ipynb_checkpoints
 figures/.ipynb_checkpoints
