@@ -5,6 +5,7 @@
 data
 *.tgz
 .ipynb_checkpoints
+figures/.ipynb_checkpoints
 
 # These are some examples of commonly ignored file patterns.
 # You should customize this list as applicable to your project.
